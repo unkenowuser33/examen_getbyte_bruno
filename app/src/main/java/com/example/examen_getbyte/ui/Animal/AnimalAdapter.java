@@ -1,5 +1,9 @@
 package com.example.examen_getbyte.ui.Animal;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +19,15 @@ import com.example.examen_getbyte.model.Animal;
 import java.util.List;
 
 public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalViewHolder> {
-
+    private static final String TAG = AnimalAdapter.class.getSimpleName();
     private List<Animal> animales;
+    private Context context;
 
-    public void setAnimales(List<Animal> animales){
+    public AnimalAdapter(Context context){ // Constructor
+        this.context = context;
+    }
+
+    public void setAnimales(List<Animal> animales){ // Recibiendo un parametro de listas desde el MainActivity
         this.animales = animales;
         notifyDataSetChanged();
     }
@@ -38,6 +47,17 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalView
             holder.item_anl_tv_edad.setText(String.valueOf(animal.getEdad()));
             holder.item_anl_tv_raza.setText(animal.getRaza());
             holder.item_anl_tv_snd_gato.setText(animal.hacerSonido());
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() { // Onclick Alert Dialog
+                @Override
+                public void onClick(View v) {
+                    mostrarLista(animal);
+
+                    Log.d(TAG, "===============================");
+                    Log.d(TAG, "Selected Item List: " + animal + animal.hacerSonido());
+                    Log.d(TAG, "===============================");
+                }
+            });
         }
     }
 
@@ -59,5 +79,25 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalView
             item_anl_tv_raza = itemView.findViewById(R.id.item_anl_tv_raza);
             item_anl_tv_snd_gato = itemView.findViewById(R.id.item_anl_tv_snd_gato);
         }
+    }
+
+    private void mostrarLista(Animal animal){ // Contenido
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Datos del Animal");
+        builder.setMessage("Nombre: " + animal.getNombre() + "\nEdad: " + animal.getEdad() + "\nRaza: " + animal.getRaza() + "\nSonido: " + animal.hacerSonido());
+        builder.setPositiveButton("Aceptar", (DialogInterface, i) -> { // 2
+            Intent intent = new Intent(context, AnimalDetailsActivity.class);
+            intent.putExtra("nombre", animal.getNombre());
+            intent.putExtra("edad", animal.getEdad());
+            intent.putExtra("raza", animal.getRaza());
+            intent.putExtra("sonido", animal.hacerSonido());
+            context.startActivity(intent);
+        });
+        builder.setNegativeButton("Cancelar", (DialogInterface, i) ->{
+            DialogInterface.dismiss();
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

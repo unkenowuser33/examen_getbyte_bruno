@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        final AnimalAdapter adapter = new AnimalAdapter();
+        final AnimalAdapter adapter = new AnimalAdapter(this); // Contexto
         recyclerView.setAdapter(adapter);
 
         animalViewModel = new ViewModelProvider(this).get(AnimalViewModel.class);
